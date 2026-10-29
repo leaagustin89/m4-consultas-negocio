@@ -27,23 +27,22 @@ HAVING COUNT(*) > 1;
 -- CONSULTA 4: Facturación mensual comparada con el promedio --
 ;WITH ventas_por_mes AS (
 -- Parte 1: calcular el total facturado de cada mes
-    SELECT
-        MONTH(fecha_venta) AS mes,
-        SUM(cantidad * precio_unitario) AS total_mes
-    FROM ventas
-    GROUP BY MONTH(fecha_venta)
+ SELECT
+       MONTH(fecha_venta) AS mes,
+       SUM(cantidad * precio_unitario) AS total_mes
+ FROM ventas
+ GROUP BY MONTH(fecha_venta)
 )
 
 -- Parte 2: comparar cada mes con el promedio mensual
 SELECT
     mes,
     total_mes,
-    CASE
-        WHEN total_mes > (SELECT AVG(total_mes) FROM ventas_por_mes)
-            THEN 'Por encima'
-        WHEN total_mes < (SELECT AVG(total_mes) FROM ventas_por_mes)
-            THEN 'Por debajo'
-        ELSE 'Igual al promedio'
+    CASE WHEN total_mes > (SELECT AVG(total_mes) FROM ventas_por_mes)
+    THEN 'Por encima'
+    WHEN total_mes < (SELECT AVG(total_mes) FROM ventas_por_mes)
+    THEN 'Por debajo'
+    ELSE 'Igual al promedio'
     END AS comparacion_promedio
 FROM ventas_por_mes
 ORDER BY mes;
